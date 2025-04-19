@@ -81,7 +81,7 @@
       margin: 10px 0;
     }
 
-    .buy-btn {
+    .buy-btn, .cart-btn {
       background-color: #000;
       color: #fff;
       padding: 12px 20px;
@@ -89,9 +89,11 @@
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
+      margin: 5px 0;
+      width: 100%;
     }
 
-    .buy-btn:hover {
+    .buy-btn:hover, .cart-btn:hover {
       background-color: #333;
     }
 
@@ -121,6 +123,8 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .form-group {
@@ -134,11 +138,13 @@
     }
 
     .form-group input,
-    .form-group textarea {
+    .form-group textarea,
+    .form-group select {
       width: 100%;
       padding: 10px;
       border: 1px solid #ddd;
       border-radius: 4px;
+      font-family: inherit;
     }
 
     .close-modal {
@@ -156,9 +162,74 @@
       border: 1px solid #ddd;
       border-radius: 4px;
     }
+
+    /* Address Fields */
+    .address-section h3 {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .address-fields {
+      display: grid;
+      gap: 15px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .address-fields .form-group:first-child,
+    .address-fields .form-group:nth-child(3),
+    .address-fields .form-group:nth-child(4),
+    .address-fields .form-group:nth-child(6) {
+      grid-column: span 2;
+    }
+
+    /* Cart Notification */
+    .cart-notification {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background: #000;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: none;
+      z-index: 1001;
+    }
+
+    /* Error Styling */
+    .error {
+      border-color: #ff4444 !important;
+    }
+
+    .error-message {
+      color: #ff4444;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .required:after {
+      content: " *";
+      color: #ff4444;
+    }
+
+    @media (max-width: 600px) {
+      .address-fields {
+        grid-template-columns: 1fr;
+      }
+      
+      .address-fields .form-group {
+        grid-column: span 1 !important;
+      }
+    }
   </style>
 </head>
 <body>
+
+  <!-- Cart Notification -->
+  <div class="cart-notification" id="cartNotification">
+    Item added to cart!
+  </div>
 
   <!-- Order Modal -->
   <div class="order-modal" id="orderModal">
@@ -169,30 +240,46 @@
         <input type="hidden" name="product" id="modalProduct">
         <input type="hidden" name="color" id="modalColor">
         <input type="hidden" name="size" id="modalSize">
+        <input type="hidden" name="quantity" id="modalQuantity">
         
-        <div class="form-group">
-          <label>Quantity:</label>
-          <input type="number" name="quantity" id="modalQuantity" class="quantity-input" min="1" value="1" readonly>
-        </div>
-
-        <div class="form-group">
-          <label for="name">Full Name:</label>
-          <input type="text" id="name" name="name" required>
-        </div>
-
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input type="email" id="email" name="email" required>
-        </div>
-
-        <div class="form-group">
-          <label for="phone">Phone:</label>
-          <input type="tel" id="phone" name="phone" required>
-        </div>
-
-        <div class="form-group">
-          <label for="address">Shipping Address:</label>
-          <textarea id="address" name="address" rows="3" required></textarea>
+        <div class="address-section">
+          <h3>Delivery</h3>
+          <div class="address-fields">
+            <div class="form-group">
+              <label for="first-name" class="required">First name</label>
+              <input type="text" id="first-name" name="first_name" required>
+              <div class="error-message">Please enter your first name</div>
+            </div>
+            <div class="form-group">
+              <label for="last-name" class="required">Last name</label>
+              <input type="text" id="last-name" name="last_name" required>
+              <div class="error-message">Please enter your last name</div>
+            </div>
+            <div class="form-group">
+              <label for="address" class="required">Address</label>
+              <input type="text" id="address" name="address" required>
+              <div class="error-message">Please enter your address</div>
+            </div>
+            <div class="form-group">
+              <label for="apartment">Apartment, suite, etc. (optional)</label>
+              <input type="text" id="apartment" name="apartment">
+            </div>
+            <div class="form-group">
+              <label for="city" class="required">City</label>
+              <input type="text" id="city" name="city" required>
+              <div class="error-message">Please enter your city</div>
+            </div>
+            <div class="form-group">
+              <label for="postcode" class="required">Postcode</label>
+              <input type="text" id="postcode" name="postcode" required>
+              <div class="error-message">Please enter your postcode</div>
+            </div>
+            <div class="form-group">
+              <label for="phone" class="required">Phone</label>
+              <input type="tel" id="phone" name="phone" required>
+              <div class="error-message">Please enter your phone number</div>
+            </div>
+          </div>
         </div>
 
         <button type="submit" class="buy-btn">Submit Order Request</button>
@@ -205,6 +292,7 @@
     <nav class="nav-links">
       <a href="index.html">Home</a>
       <a href="shop.html">Shop</a>
+      <a href="#" id="cart-link">Cart (<span id="cart-count">0</span>)</a>
     </nav>
   </header>
 
@@ -226,17 +314,18 @@
         </select>
 
         <label for="size1">Size</label>
-        <select id="size1">
-          <option disabled selected>Select Size</option>
-          <option>S</option>
-          <option>M</option>
-          <option>L</option>
-          <option>XL</option>
+        <select id="size1" class="size-select">
+          <option value="" disabled selected>Select Size</option>
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
         </select>
 
         <label for="quantity1">Quantity</label>
         <input type="number" id="quantity1" class="quantity-input" min="1" value="1">
 
+        <button class="cart-btn" onclick="addToCart('product1')">Add to Cart</button>
         <button class="buy-btn" onclick="buyNow('Oversized Tee', 'product1')">Buy Now</button>
       </div>
 
@@ -253,17 +342,18 @@
         </select>
 
         <label for="size2">Size</label>
-        <select id="size2">
-          <option disabled selected>Select Size</option>
-          <option>S</option>
-          <option>M</option>
-          <option>L</option>
-          <option>XL</option>
+        <select id="size2" class="size-select">
+          <option value="" disabled selected>Select Size</option>
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
         </select>
 
         <label for="quantity2">Quantity</label>
         <input type="number" id="quantity2" class="quantity-input" min="1" value="1">
 
+        <button class="cart-btn" onclick="addToCart('product2')">Add to Cart</button>
         <button class="buy-btn" onclick="buyNow('Graphic Hoodie', 'product2')">Buy Now</button>
       </div>
 
@@ -280,14 +370,15 @@
         </select>
 
         <label for="size3">Size</label>
-        <select id="size3">
-          <option disabled selected>Select Size</option>
-          <option>One Size</option>
+        <select id="size3" class="size-select">
+          <option value="" disabled selected>Select Size</option>
+          <option value="One Size">One Size</option>
         </select>
 
         <label for="quantity3">Quantity</label>
         <input type="number" id="quantity3" class="quantity-input" min="1" value="1">
 
+        <button class="cart-btn" onclick="addToCart('product3')">Add to Cart</button>
         <button class="buy-btn" onclick="buyNow('Minimalist Cap', 'product3')">Buy Now</button>
       </div>
 
@@ -303,17 +394,18 @@
         </select>
 
         <label for="size4">Size</label>
-        <select id="size4">
-          <option disabled selected>Select Size</option>
-          <option>S</option>
-          <option>M</option>
-          <option>L</option>
-          <option>XL</option>
+        <select id="size4" class="size-select">
+          <option value="" disabled selected>Select Size</option>
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
         </select>
 
         <label for="quantity4">Quantity</label>
         <input type="number" id="quantity4" class="quantity-input" min="1" value="1">
 
+        <button class="cart-btn" onclick="addToCart('product4')">Add to Cart</button>
         <button class="buy-btn" onclick="buyNow('Cargo Joggers', 'product4')">Buy Now</button>
       </div>
 
@@ -329,17 +421,18 @@
         </select>
 
         <label for="size5">Size</label>
-        <select id="size5">
-          <option disabled selected>Select Size</option>
-          <option>8</option>
-          <option>9</option>
-          <option>10</option>
-          <option>11</option>
+        <select id="size5" class="size-select">
+          <option value="" disabled selected>Select Size</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
         </select>
 
         <label for="quantity5">Quantity</label>
         <input type="number" id="quantity5" class="quantity-input" min="1" value="1">
 
+        <button class="cart-btn" onclick="addToCart('product5')">Add to Cart</button>
         <button class="buy-btn" onclick="buyNow('Streetwear Sneakers', 'product5')">Buy Now</button>
       </div>
 
@@ -347,65 +440,171 @@
   </main>
 
   <script>
-    function changeColor(selectElement, productId) {
-      const newSrc = selectElement.value;
-      const productImage = document.querySelector(`#${productId} .product-image`);
-      productImage.src = newSrc;
-
-      const colorName = selectElement.options[selectElement.selectedIndex].text;
-      const productTitle = document.querySelector(`#${productId} h2`).innerText;
-      productImage.alt = `${productTitle} in ${colorName.toLowerCase()}`;
+    // Cart functionality
+    let cart = [];
+    
+    function updateCartCount() {
+      const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+      document.getElementById('cart-count').textContent = totalItems;
     }
-
-    function buyNow(productName, productId) {
+    
+    function showCartNotification() {
+      const notification = document.getElementById('cartNotification');
+      notification.style.display = 'block';
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+    
+    function addToCart(productId) {
       const productCard = document.getElementById(productId);
-      const sizeSelect = productCard.querySelector('select[id^="size"]');
+      const sizeSelect = productCard.querySelector('.size-select');
       const colorSelect = productCard.querySelector('select[id^="color"]');
       const quantityInput = productCard.querySelector('.quantity-input');
       
-      // Validate size selection
-      if (sizeSelect.value === "") {
-        alert("Please select a size before proceeding");
+      if (sizeSelect.value === null || sizeSelect.value === "") {
+        alert("Please select a size first");
         sizeSelect.focus();
         return;
       }
-
-      // Get values
+      
+      const product = {
+        id: productId,
+        name: productCard.querySelector('h2').textContent,
+        price: parseFloat(productCard.querySelector('.price').textContent.replace('$', '')),
+        color: colorSelect.options[colorSelect.selectedIndex].text,
+        size: sizeSelect.value,
+        quantity: parseInt(quantityInput.value),
+        image: productCard.querySelector('img').src,
+        sku: productCard.dataset.sku
+      };
+      
+      // Check if item already exists in cart
+      const existingItem = cart.find(item => 
+        item.id === product.id && 
+        item.color === product.color && 
+        item.size === product.size
+      );
+      
+      if (existingItem) {
+        existingItem.quantity += product.quantity;
+      } else {
+        cart.push(product);
+      }
+      
+      updateCartCount();
+      showCartNotification();
+      saveCartToStorage();
+    }
+    
+    function saveCartToStorage() {
+      localStorage.setItem('maccarthyyCart', JSON.stringify(cart));
+    }
+    
+    function loadCartFromStorage() {
+      const savedCart = localStorage.getItem('maccarthyyCart');
+      if (savedCart) {
+        cart = JSON.parse(savedCart);
+        updateCartCount();
+      }
+    }
+    
+    // Initialize cart
+    loadCartFromStorage();
+    
+    // Product color change
+    function changeColor(selectElement, productId) {
+      const productImage = document.querySelector(`#${productId} .product-image`);
+      productImage.src = selectElement.value;
+      productImage.alt = `${productId} in ${selectElement.options[selectElement.selectedIndex].text}`;
+    }
+    
+    // Buy Now function
+    function buyNow(productName, productId) {
+      const productCard = document.getElementById(productId);
+      const sizeSelect = productCard.querySelector('.size-select');
+      const colorSelect = productCard.querySelector('select[id^="color"]');
+      const quantityInput = productCard.querySelector('.quantity-input');
+      
+      if (sizeSelect.value === null || sizeSelect.value === "") {
+        alert("Please select a size first");
+        sizeSelect.focus();
+        return;
+      }
+      
       const size = sizeSelect.value;
       const color = colorSelect.options[colorSelect.selectedIndex].text;
       const quantity = quantityInput.value;
-
-      // Set modal values
+      
       document.getElementById('modalProduct').value = `${productName} (${color}, Size: ${size})`;
       document.getElementById('modalColor').value = color;
       document.getElementById('modalSize').value = size;
       document.getElementById('modalQuantity').value = quantity;
-
-      // Show modal
+      
       document.getElementById('orderModal').style.display = 'block';
     }
-
+    
     function closeModal() {
       document.getElementById('orderModal').style.display = 'none';
     }
-
-    // Handle form submission
+    
+    // Form validation and submission
     document.getElementById('orderForm').addEventListener('submit', function(e) {
       e.preventDefault();
+      
+      let isValid = true;
+      let firstInvalidField = null;
+      
+      // Validate all required fields
+      const requiredFields = this.querySelectorAll('[required]');
+      requiredFields.forEach(field => {
+        const errorMsg = field.nextElementSibling;
+        if (field.value.trim() === '') {
+          field.classList.add('error');
+          errorMsg.style.display = 'block';
+          isValid = false;
+          
+          // Track first invalid field
+          if (!firstInvalidField) {
+            firstInvalidField = field;
+          }
+        } else {
+          field.classList.remove('error');
+          errorMsg.style.display = 'none';
+        }
+      });
+      
+      if (!isValid) {
+        firstInvalidField.focus();
+        return;
+      }
       
       const submitBtn = this.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Processing...';
       
+      // Prepare form data
+      const formData = new FormData(this);
+      
+      // Add formatted address
+      const address = `
+        ${formData.get('first_name')} ${formData.get('last_name')}
+        ${formData.get('address')}
+        ${formData.get('apartment') ? 'Apt/Suite: ' + formData.get('apartment') + '\n' : ''}
+        ${formData.get('city')}, ${formData.get('postcode')}
+        Phone: ${formData.get('phone')}
+      `;
+      
+      formData.append('formatted_address', address.trim());
+      
+      // Send to Formspree
       fetch(this.action, {
         method: 'POST',
-        body: new FormData(this),
-        headers: {
-          'Accept': 'application/json'
-        }
+        body: formData,
+        headers: { 'Accept': 'application/json' }
       }).then(response => {
         if (response.ok) {
-          alert('Order request received! We will email payment details shortly.');
+          alert('Order received! We will email payment details shortly.');
           this.reset();
           closeModal();
         } else {
@@ -418,12 +617,22 @@
         submitBtn.textContent = 'Submit Order Request';
       });
     });
-
+    
     // Close modal when clicking outside
     window.addEventListener('click', function(event) {
       if (event.target === document.getElementById('orderModal')) {
         closeModal();
       }
+    });
+    
+    // Real-time validation
+    document.querySelectorAll('#orderForm [required]').forEach(field => {
+      field.addEventListener('input', function() {
+        if (this.value.trim() !== '') {
+          this.classList.remove('error');
+          this.nextElementSibling.style.display = 'none';
+        }
+      });
     });
   </script>
 </body>
