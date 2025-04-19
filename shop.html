@@ -98,9 +98,107 @@
     select option[disabled] {
       color: #aaa;
     }
+
+    /* Modal Styles */
+    .order-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .quantity-input {
+      width: 60px;
+      padding: 8px;
+      text-align: center;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Order Modal -->
+  <div class="order-modal" id="orderModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <h2>Complete Your Order</h2>
+      <form id="orderForm" action="https://formspree.io/f/xldjqgvy" method="POST">
+        <input type="hidden" name="product" id="modalProduct">
+        <input type="hidden" name="color" id="modalColor">
+        <input type="hidden" name="size" id="modalSize">
+        
+        <div class="form-group">
+          <label>Quantity:</label>
+          <input type="number" name="quantity" id="modalQuantity" class="quantity-input" min="1" value="1" readonly>
+        </div>
+
+        <div class="form-group">
+          <label for="name">Full Name:</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone:</label>
+          <input type="tel" id="phone" name="phone" required>
+        </div>
+
+        <div class="form-group">
+          <label for="address">Shipping Address:</label>
+          <textarea id="address" name="address" rows="3" required></textarea>
+        </div>
+
+        <button type="submit" class="buy-btn">Submit Order Request</button>
+      </form>
+    </div>
+  </div>
 
   <header class="navbar">
     <div class="logo">MACCARTHYY</div>
@@ -136,7 +234,10 @@
           <option>XL</option>
         </select>
 
-        <button class="buy-btn" onclick="buyNow('Oversized Tee')">Buy Now</button>
+        <label for="quantity1">Quantity</label>
+        <input type="number" id="quantity1" class="quantity-input" min="1" value="1">
+
+        <button class="buy-btn" onclick="buyNow('Oversized Tee', 'product1')">Buy Now</button>
       </div>
 
       <!-- Product 2 -->
@@ -160,7 +261,10 @@
           <option>XL</option>
         </select>
 
-        <button class="buy-btn" onclick="buyNow('Graphic Hoodie')">Buy Now</button>
+        <label for="quantity2">Quantity</label>
+        <input type="number" id="quantity2" class="quantity-input" min="1" value="1">
+
+        <button class="buy-btn" onclick="buyNow('Graphic Hoodie', 'product2')">Buy Now</button>
       </div>
 
       <!-- Product 3 -->
@@ -181,7 +285,10 @@
           <option>One Size</option>
         </select>
 
-        <button class="buy-btn" onclick="buyNow('Minimalist Cap')">Buy Now</button>
+        <label for="quantity3">Quantity</label>
+        <input type="number" id="quantity3" class="quantity-input" min="1" value="1">
+
+        <button class="buy-btn" onclick="buyNow('Minimalist Cap', 'product3')">Buy Now</button>
       </div>
 
       <!-- Product 4 -->
@@ -204,7 +311,10 @@
           <option>XL</option>
         </select>
 
-        <button class="buy-btn" onclick="buyNow('Cargo Joggers')">Buy Now</button>
+        <label for="quantity4">Quantity</label>
+        <input type="number" id="quantity4" class="quantity-input" min="1" value="1">
+
+        <button class="buy-btn" onclick="buyNow('Cargo Joggers', 'product4')">Buy Now</button>
       </div>
 
       <!-- Product 5 -->
@@ -227,7 +337,10 @@
           <option>11</option>
         </select>
 
-        <button class="buy-btn" onclick="buyNow('Streetwear Sneakers')">Buy Now</button>
+        <label for="quantity5">Quantity</label>
+        <input type="number" id="quantity5" class="quantity-input" min="1" value="1">
+
+        <button class="buy-btn" onclick="buyNow('Streetwear Sneakers', 'product5')">Buy Now</button>
       </div>
 
     </div>
@@ -239,16 +352,79 @@
       const productImage = document.querySelector(`#${productId} .product-image`);
       productImage.src = newSrc;
 
-      // Update alt text dynamically
       const colorName = selectElement.options[selectElement.selectedIndex].text;
       const productTitle = document.querySelector(`#${productId} h2`).innerText;
       productImage.alt = `${productTitle} in ${colorName.toLowerCase()}`;
     }
 
-    function buyNow(productName) {
-      alert(`Thanks for your interest in the ${productName}! Checkout coming soon.`);
-    }
-  </script>
+    function buyNow(productName, productId) {
+      const productCard = document.getElementById(productId);
+      const sizeSelect = productCard.querySelector('select[id^="size"]');
+      const colorSelect = productCard.querySelector('select[id^="color"]');
+      const quantityInput = productCard.querySelector('.quantity-input');
+      
+      // Validate size selection
+      if (sizeSelect.value === "") {
+        alert("Please select a size before proceeding");
+        sizeSelect.focus();
+        return;
+      }
 
+      // Get values
+      const size = sizeSelect.value;
+      const color = colorSelect.options[colorSelect.selectedIndex].text;
+      const quantity = quantityInput.value;
+
+      // Set modal values
+      document.getElementById('modalProduct').value = `${productName} (${color}, Size: ${size})`;
+      document.getElementById('modalColor').value = color;
+      document.getElementById('modalSize').value = size;
+      document.getElementById('modalQuantity').value = quantity;
+
+      // Show modal
+      document.getElementById('orderModal').style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('orderModal').style.display = 'none';
+    }
+
+    // Handle form submission
+    document.getElementById('orderForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const submitBtn = this.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Processing...';
+      
+      fetch(this.action, {
+        method: 'POST',
+        body: new FormData(this),
+        headers: {
+          'Accept': 'application/json'
+        }
+      }).then(response => {
+        if (response.ok) {
+          alert('Order request received! We will email payment details shortly.');
+          this.reset();
+          closeModal();
+        } else {
+          throw new Error('Submission failed');
+        }
+      }).catch(error => {
+        alert('There was an error submitting your order. Please try again.');
+      }).finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Order Request';
+      });
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+      if (event.target === document.getElementById('orderModal')) {
+        closeModal();
+      }
+    });
+  </script>
 </body>
 </html>
