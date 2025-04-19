@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Maccarthyy - Premium Streetwear Fashion">
+  <title>Maccarthyy</title>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Preloader -->
+  <div id="preloader">
+    <h1 class="preloader-text">Maccarthyy</h1>
+  </div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">MACCARTHYY</div>
+    <nav class="nav-links">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="hamburger" aria-label="Toggle navigation" role="button" tabindex="0">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <p class="dynamic-text">We create dreams</p>
+      <a href="shop.html" class="shop-now-button">Shop Now</a>
+    </div>
+  </section>
+  
+  <!-- Featured Products -->
+  <section class="featured-products">
+    <h2>Featured Products</h2>
+    <div class="featured-grid">
+      <div class="featured-item">
+        <a href="product.html?product=black-tee" class="featured-link">
+          <img src="lookbook.jpg" alt="Black Oversized T-shirt" />
+          <div class="featured-overlay">
+            <h3>Black Oversized Tee</h3>
+            <p class="price">$35.00</p>
+          </div>
+        </a>
+      </div>
+      <div class="featured-item">
+        <a href="product.html?product=white-hoodie" class="featured-link">
+          <img src="lookbook2.jpg" alt="White Graphic Hoodie" />
+          <div class="featured-overlay">
+            <h3>White Graphic Hoodie</h3>
+            <p class="price">$50.00</p>
+          </div>
+        </a>
+      </div>
+      <div class="featured-item">
+        <a href="product.html?product=minimalist-cap" class="featured-link">
+          <img src="lookbook3.jpg" alt="Minimalist Baseball Cap" />
+          <div class="featured-overlay">
+            <h3>Minimalist Cap</h3>
+            <p class="price">$20.00</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Second Hero -->
+  <section class="hero reverse second-hero">
+    <div class="second-hero-text" data-aos="fade-up">
+      Not for the faint of fit
+    </div>
+    <div class="hero-image">
+      <img src="hero.jpg" alt="Model wearing Maccarthyy streetwear" />
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 1000, once: true });
+  </script>
+
+
+<!-- Add this right after the second hero section -->
+<section class="design-process" data-aos="fade-up">
+  <div class="process-container">
+    <!-- Animated steps -->
+    <div class="process-step" data-aos-delay="100">
+      <div class="step-number pulse-anim">1</div>
+      <h3>Concept</h3>
+      <p>Raw ideas from street culture</p>
+      <div class="step-line"></div>
+    </div>
+    
+    <div class="process-step" data-aos-delay="300">
+      <div class="step-number pulse-anim">2</div>
+      <h3>Design</h3>
+      <p>Digital sketches come to life</p>
+      <div class="step-line"></div>
+    </div>
+    
+    <div class="process-step" data-aos-delay="500">
+      <div class="step-number pulse-anim">3</div>
+      <h3>Prototype</h3>
+      <p>Handcrafted samples</p>
+      <div class="step-line"></div>
+    </div>
+    
+    <div class="process-step" data-aos-delay="700">
+      <div class="step-number pulse-anim">4</div>
+      <h3>Release</h3>
+      <p>Limited edition drops</p>
+    </div>
+  </div>
+  
+  <!-- Animated background element -->
+  <div class="design-bg-element"></div>
+</section>
+
+  <section class="instagram-feed">
+    <h2>Tag #Maccarthyy</h2>
+    <p>Join the movement. Wear the culture.</p>
+    <div class="feed-grid">
+      <!-- Images would be dynamically loaded from Instagram API -->
+  </section>
+
+</body>
+</html>

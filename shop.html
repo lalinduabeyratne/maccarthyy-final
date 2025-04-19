@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop - Maccarthyy</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      background: #f9f9f9;
+    }
+
+    .navbar {
+      background: #000;
+      color: #fff;
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: bold;
+    }
+
+    .shop-container {
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #111;
+    }
+
+    .product-card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+
+    .product-card:hover {
+      transform: scale(1.02);
+    }
+
+    .product-card img {
+      width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .product-card select {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .price {
+      font-weight: bold;
+      color: #444;
+      margin: 10px 0;
+    }
+
+    .buy-btn {
+      background-color: #000;
+      color: #fff;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .buy-btn:hover {
+      background-color: #333;
+    }
+
+    select option[disabled] {
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo">MACCARTHYY</div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Shop All Products</h1>
+    <div class="shop-container">
+
+      <!-- Product 1 -->
+      <div class="product-card" id="product1" data-sku="tee-blk-001">
+        <img src="lookbook.jpg" alt="Oversized Tee in black" class="product-image" />
+        <h2>Oversized Tee</h2>
+        <p class="price">$35.00</p>
+
+        <label for="color1">Color</label>
+        <select id="color1" onchange="changeColor(this, 'product1')">
+          <option value="lookbook.jpg">Black</option>
+          <option value="lookbook2.jpg">White</option>
+          <option value="lookbook3.jpg">Beige</option>
+        </select>
+
+        <label for="size1">Size</label>
+        <select id="size1">
+          <option disabled selected>Select Size</option>
+          <option>S</option>
+          <option>M</option>
+          <option>L</option>
+          <option>XL</option>
+        </select>
+
+        <button class="buy-btn" onclick="buyNow('Oversized Tee')">Buy Now</button>
+      </div>
+
+      <!-- Product 2 -->
+      <div class="product-card" id="product2" data-sku="hoodie-wht-002">
+        <img src="lookbook2.jpg" alt="Graphic Hoodie in white" class="product-image" />
+        <h2>Graphic Hoodie</h2>
+        <p class="price">$50.00</p>
+
+        <label for="color2">Color</label>
+        <select id="color2" onchange="changeColor(this, 'product2')">
+          <option value="lookbook2.jpg">White</option>
+          <option value="lookbook.jpg">Black</option>
+        </select>
+
+        <label for="size2">Size</label>
+        <select id="size2">
+          <option disabled selected>Select Size</option>
+          <option>S</option>
+          <option>M</option>
+          <option>L</option>
+          <option>XL</option>
+        </select>
+
+        <button class="buy-btn" onclick="buyNow('Graphic Hoodie')">Buy Now</button>
+      </div>
+
+      <!-- Product 3 -->
+      <div class="product-card" id="product3" data-sku="cap-bge-003">
+        <img src="lookbook3.jpg" alt="Minimalist Cap in beige" class="product-image" />
+        <h2>Minimalist Cap</h2>
+        <p class="price">$20.00</p>
+
+        <label for="color3">Color</label>
+        <select id="color3" onchange="changeColor(this, 'product3')">
+          <option value="lookbook3.jpg">Beige</option>
+          <option value="lookbook.jpg">Black</option>
+        </select>
+
+        <label for="size3">Size</label>
+        <select id="size3">
+          <option disabled selected>Select Size</option>
+          <option>One Size</option>
+        </select>
+
+        <button class="buy-btn" onclick="buyNow('Minimalist Cap')">Buy Now</button>
+      </div>
+
+      <!-- Product 4 -->
+      <div class="product-card" id="product4" data-sku="jogger-blk-004">
+        <img src="lookbook.jpg" alt="Cargo Joggers in black" class="product-image" />
+        <h2>Cargo Joggers</h2>
+        <p class="price">$40.00</p>
+
+        <label for="color4">Color</label>
+        <select id="color4" onchange="changeColor(this, 'product4')">
+          <option value="lookbook.jpg">Black</option>
+        </select>
+
+        <label for="size4">Size</label>
+        <select id="size4">
+          <option disabled selected>Select Size</option>
+          <option>S</option>
+          <option>M</option>
+          <option>L</option>
+          <option>XL</option>
+        </select>
+
+        <button class="buy-btn" onclick="buyNow('Cargo Joggers')">Buy Now</button>
+      </div>
+
+      <!-- Product 5 -->
+      <div class="product-card" id="product5" data-sku="sneaker-blk-005">
+        <img src="lookbook.jpg" alt="Streetwear Sneakers in black" class="product-image" />
+        <h2>Streetwear Sneakers</h2>
+        <p class="price">$60.00</p>
+
+        <label for="color5">Color</label>
+        <select id="color5" onchange="changeColor(this, 'product5')">
+          <option value="lookbook.jpg">Black</option>
+        </select>
+
+        <label for="size5">Size</label>
+        <select id="size5">
+          <option disabled selected>Select Size</option>
+          <option>8</option>
+          <option>9</option>
+          <option>10</option>
+          <option>11</option>
+        </select>
+
+        <button class="buy-btn" onclick="buyNow('Streetwear Sneakers')">Buy Now</button>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    function changeColor(selectElement, productId) {
+      const newSrc = selectElement.value;
+      const productImage = document.querySelector(`#${productId} .product-image`);
+      productImage.src = newSrc;
+
+      // Update alt text dynamically
+      const colorName = selectElement.options[selectElement.selectedIndex].text;
+      const productTitle = document.querySelector(`#${productId} h2`).innerText;
+      productImage.alt = `${productTitle} in ${colorName.toLowerCase()}`;
+    }
+
+    function buyNow(productName) {
+      alert(`Thanks for your interest in the ${productName}! Checkout coming soon.`);
+    }
+  </script>
+
+</body>
+</html>
